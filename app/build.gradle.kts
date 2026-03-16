@@ -95,6 +95,9 @@ dependencies {
     // Coil
     implementation(libs.coil.compose)
 
+    //Font
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.6.7")
+
     // Lottie
     implementation(libs.lottie.compose)
 

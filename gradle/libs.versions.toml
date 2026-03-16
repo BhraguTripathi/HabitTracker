@@ -16,6 +16,7 @@ lottie = "6.4.0"
 accompanistSystemUiController = "0.34.0"
 accompanistPager = "0.34.0"
 splashscreen = "1.0.1"
+uiTextGoogleFonts = "1.10.5"
 workManager = "2.9.0"
 hiltWork = "1.2.0"
 mpandroidchart = "v3.1.0"
@@ -25,6 +26,7 @@ ksp = "1.9.23-1.0.20"
 
 [libraries]
 # Core
+androidx-compose-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntime" }
 androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleRuntime" }
