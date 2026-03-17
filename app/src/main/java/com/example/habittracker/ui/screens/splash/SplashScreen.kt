@@ -1,5 +1,6 @@
 package com.example.habittracker.ui.screens.splash
 
+import android.app.Activity
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -9,9 +10,12 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -21,12 +25,15 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowInsetsControllerCompat
 import com.example.habittracker.ui.theme.GradientEnd
 import com.example.habittracker.ui.theme.GradientStart
-import com.habittracker.R
+import com.example.habittracker.R
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
@@ -36,13 +43,27 @@ import kotlinx.coroutines.launch
 
 //Constants
 private const val MIN_SPLASH_DURATION = 800L
-private const val RING_PLUSE_DURATION = 1200
+private const val RING_PULSE_DURATION = 1200
 private const val RING_MIN_SCALE = 0.88f
 private const val RING_MAX_SCALE = 1.00f
 @Composable
 fun SplashScreen(
     onSplashFinished: () -> Unit = {}
 ){
+
+    val view = LocalView.current
+    val context = LocalContext.current
+
+    DisposableEffect(key1 = Unit) {
+        val window = (context as Activity).window
+        val controller = WindowInsetsControllerCompat(window, view)
+
+        controller.isAppearanceLightStatusBars = false
+        onDispose {
+            controller.isAppearanceLightStatusBars = true
+        }
+    }
+
     val ring1Scale = remember { Animatable(RING_MAX_SCALE)}
     val ring2Scale = remember { Animatable(RING_MAX_SCALE)}
     val ring3Scale = remember { Animatable(RING_MAX_SCALE)}
@@ -55,7 +76,7 @@ fun SplashScreen(
                 targetValue = RING_MIN_SCALE,
                 animationSpec = infiniteRepeatable(
                     animation = tween (
-                        durationMillis = RING_PLUSE_DURATION,
+                        durationMillis = RING_PULSE_DURATION,
                         easing = FastOutSlowInEasing
                     ),
                     repeatMode = RepeatMode.Reverse
@@ -70,7 +91,7 @@ fun SplashScreen(
                 targetValue = RING_MIN_SCALE,
                 animationSpec = infiniteRepeatable(
                     animation = tween (
-                        durationMillis = RING_PLUSE_DURATION,
+                        durationMillis = RING_PULSE_DURATION,
                         easing = FastOutSlowInEasing
                     ),
                     repeatMode = RepeatMode.Reverse
@@ -85,7 +106,7 @@ fun SplashScreen(
                 targetValue = RING_MIN_SCALE,
                 animationSpec = infiniteRepeatable(
                     animation = tween (
-                        durationMillis = RING_PLUSE_DURATION,
+                        durationMillis = RING_PULSE_DURATION,
                         easing = FastOutSlowInEasing
                     ),
                     repeatMode = RepeatMode.Reverse
@@ -105,6 +126,7 @@ fun SplashScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .windowInsetsPadding(WindowInsets(0, 0, 0, 0))
             .background(
                 brush = Brush.linearGradient(
                     colors = listOf(
@@ -124,7 +146,7 @@ fun SplashScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             val center = this.center
-            val strokeWidth = 1.dp.toPx()
+            val strokeWidth = 2.dp.toPx()
             val ringColor = Color.White.copy(alpha = 0.08f)
 
             val baseRadii = listOf(
