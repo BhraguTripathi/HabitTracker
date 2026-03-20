@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.habittracker.ui.screens.auth.LoginScreen
+import com.example.habittracker.ui.screens.auth.SignUpScreen
 import com.example.habittracker.ui.screens.onboarding.OnboardingScreen
 import com.example.habittracker.ui.screens.splash.SplashScreen
 
@@ -55,6 +56,16 @@ fun NavGraph(
                 onCreateAccount  = {
                     navController.navigate(Screen.CreateAccount.route)
                 }
+            )
+        }
+
+        //SignUp Screen
+        composable(Screen.CreateAccount.route) {
+            SignUpScreen(
+                onBackClick = { navController.popBackStack() },
+                onNextClick = { navController.navigate(Screen.Gender.route) },
+                onLogin = { navController.navigate(Screen.Login.route) },
+                onCreateAccount= {}
             )
         }
 

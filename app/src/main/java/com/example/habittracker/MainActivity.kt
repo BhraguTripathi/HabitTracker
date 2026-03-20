@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.WindowCompat
 import com.example.habittracker.ui.screens.auth.LoginScreen
+import com.example.habittracker.ui.screens.auth.SignUpScreen
 import com.example.habittracker.ui.screens.onboarding.OnboardingScreen
 import com.example.habittracker.ui.screens.splash.SplashScreen
 import com.example.habittracker.ui.theme.HabitTrackerTheme
@@ -24,7 +25,8 @@ class MainActivity : ComponentActivity() {
 //                NavGraph()
 //                SplashScreen()
                 //OnboardingScreen()
-                LoginScreen()
+//                LoginScreen()
+                SignUpScreen()
             }
         }
     }

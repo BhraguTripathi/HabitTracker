@@ -1,19 +1,19 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
+    // alias(libs.plugins.jetbrains.kotlin.android) // Removed as per AGP 9.0 requirement
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.kotlin.compose)
 }
 
 android {
     namespace = "com.example.habittracker"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.habittracker"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -38,9 +38,9 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
-    }
+    // kotlinOptions {
+    //     jvmTarget = "17"
+    // }
 
     buildFeatures {
         compose = true
