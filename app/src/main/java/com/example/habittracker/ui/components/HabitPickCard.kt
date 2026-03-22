@@ -17,50 +17,49 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.habittracker.ui.screens.auth.HabitItem
 import com.example.habittracker.ui.theme.BorderColor
 import com.example.habittracker.ui.theme.NunitoFontFamily
 import com.example.habittracker.ui.theme.Primary
-import com.example.habittracker.ui.theme.TextSecondary
-
+import com.example.habittracker.ui.theme.TextPrimary
 
 @Composable
-fun GenderCard(
-    emoji : String,
-    label : String,
+fun HabitPickCard(
+    habit : HabitItem,
     isSelected : Boolean,
-    modifier : Modifier = Modifier,
     onClick : () -> Unit
 ){
     Surface(
-        onClick        = onClick,
-        shape          = RoundedCornerShape(20.dp),
-        color          = Color.White,
-        border         = BorderStroke(
+        onClick         = onClick,
+        shape           = RoundedCornerShape(20.dp),
+        color           = Color.White,
+        border          = BorderStroke(
             width = if (isSelected) 2.dp else 1.dp,
             color = if (isSelected) Primary else BorderColor
         ),
-        tonalElevation = 0.dp,
-        modifier       = modifier
+        tonalElevation  = 0.dp,
+        modifier        = Modifier.fillMaxWidth()
     ) {
         Column(
             modifier            = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 32.dp),
+                .padding(vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text     = emoji,
-                fontSize = 48.sp
+                text     = habit.emoji,
+                fontSize = 40.sp
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text       = label,
-                fontSize   = 16.sp,
+                text       = habit.label,
+                fontSize   = 14.sp,
                 fontWeight = FontWeight.SemiBold,
                 fontFamily = NunitoFontFamily,
-                color      = if (isSelected) Primary else TextSecondary
+                color      = if (isSelected) Primary else TextPrimary
             )
         }
     }
+
 }

@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.WindowCompat
 import com.example.habittracker.ui.screens.auth.GenderScreen
+import com.example.habittracker.ui.screens.auth.HabitPicker
 import com.example.habittracker.ui.screens.auth.LoginScreen
 import com.example.habittracker.ui.screens.auth.SignUpScreen
 import com.example.habittracker.ui.screens.onboarding.OnboardingScreen
@@ -28,7 +29,8 @@ class MainActivity : ComponentActivity() {
                 //OnboardingScreen()
 //                LoginScreen()
 //                SignUpScreen()
-                GenderScreen()
+//                GenderScreen()
+                HabitPicker()
             }
         }
     }
