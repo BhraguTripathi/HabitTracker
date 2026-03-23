@@ -26,11 +26,11 @@ class MainActivity : ComponentActivity() {
             HabitTrackerTheme {
 //                NavGraph()
 //                SplashScreen()
-                //OnboardingScreen()
+//                OnboardingScreen()
 //                LoginScreen()
 //                SignUpScreen()
 //                GenderScreen()
-                HabitPicker()
+//                HabitPicker()
             }
         }
     }

@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.example.habittracker.ui.theme.HabitTypography
 
 // ─────────────────────────────────────────────
 // LIGHT COLOR SCHEME
