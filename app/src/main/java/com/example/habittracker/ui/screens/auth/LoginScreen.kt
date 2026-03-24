@@ -83,7 +83,7 @@ fun LoginScreen(
             focusedBorderColor = Primary,
             unfocusedBorderColor = BorderColor,
             cursorColor = Primary,
-            focusedTrailingIconColor = TextOnDark,
+            focusedTrailingIconColor = TextPrimary,
             unfocusedTrailingIconColor = TextHint,
             focusedLabelColor = Primary,
             unfocusedLabelColor = TextHint,

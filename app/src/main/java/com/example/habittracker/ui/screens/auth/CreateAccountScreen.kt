@@ -93,7 +93,7 @@ fun SignUpScreen(
         focusedBorderColor = Primary,
         unfocusedBorderColor = BorderColor,
         cursorColor = Primary,
-        focusedTrailingIconColor = TextOnDark,
+        focusedTrailingIconColor = TextPrimary,
         unfocusedTrailingIconColor = TextHint,
         focusedLabelColor = Primary,
         unfocusedLabelColor = TextHint,
