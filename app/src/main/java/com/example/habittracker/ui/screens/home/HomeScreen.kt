@@ -5,6 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -520,7 +521,7 @@ private fun HomeProgressBanner(
                 modifier         = Modifier.size(60.dp),
                 contentAlignment = Alignment.Center
             ) {
-                androidx.compose.foundation.Canvas(
+                Canvas(
                     modifier = Modifier.size(60.dp)
                 ) {
                     drawCircle(
@@ -542,7 +543,7 @@ private fun HomeProgressBanner(
                     )
                 }
                 Text(
-                    text       = "%${(progress * 100).toInt()}",
+                    text       = "${(progress * 100).toInt()}%",
                     fontSize   = 13.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = NunitoFontFamily,
