@@ -9,8 +9,11 @@ import com.example.habittracker.ui.screens.auth.GenderScreen
 import com.example.habittracker.ui.screens.auth.HabitPicker
 import com.example.habittracker.ui.screens.auth.LoginScreen
 import com.example.habittracker.ui.screens.auth.SignUpScreen
+import com.example.habittracker.ui.screens.explore.ExploreScreen
 import com.example.habittracker.ui.screens.home.HomeScreen
 import com.example.habittracker.ui.screens.onboarding.OnboardingScreen
+import com.example.habittracker.ui.screens.profile.ProfileScreen
+import com.example.habittracker.ui.screens.settings.SettingsScreen
 import com.example.habittracker.ui.screens.splash.SplashScreen
 import com.example.habittracker.ui.theme.HabitTrackerTheme
 
@@ -32,7 +35,10 @@ class MainActivity : ComponentActivity() {
 //                SignUpScreen()
 //                GenderScreen()
 //                HabitPicker()
-                HomeScreen()
+//                HomeScreen()
+//                ExploreScreen()
+//                ProfileScreen()
+                SettingsScreen()
             }
         }
     }

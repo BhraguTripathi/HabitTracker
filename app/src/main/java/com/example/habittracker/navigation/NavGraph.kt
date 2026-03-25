@@ -9,69 +9,71 @@ import com.example.habittracker.ui.screens.auth.GenderScreen
 import com.example.habittracker.ui.screens.auth.HabitPicker
 import com.example.habittracker.ui.screens.auth.LoginScreen
 import com.example.habittracker.ui.screens.auth.SignUpScreen
+import com.example.habittracker.ui.screens.explore.ExploreScreen
+import com.example.habittracker.ui.screens.home.HomeScreen
 import com.example.habittracker.ui.screens.onboarding.OnboardingScreen
+import com.example.habittracker.ui.screens.profile.ProfileScreen
+import com.example.habittracker.ui.screens.settings.SettingsScreen
 import com.example.habittracker.ui.screens.splash.SplashScreen
 
 @Composable
 fun NavGraph(
     navController: NavHostController = rememberNavController()
-){
+) {
     NavHost(
-        navController = navController,
+        navController  = navController,
         startDestination = Screen.Splash.route
-    ){
-        //Splash Screen
-        composable(Screen.Splash.route){
+    ) {
+
+        // ── Splash ────────────────────────────────────────────────
+        composable(Screen.Splash.route) {
             SplashScreen(
                 onSplashFinished = {
-                    navController.navigate(Screen.Onboarding.route){
-                        popUpTo(Screen.Splash.route){
-                            inclusive = true
-                        }
+                    navController.navigate(Screen.Onboarding.route) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
                     }
                 }
             )
         }
 
-        //Onboarding Screen
-        composable(Screen.Onboarding.route){
+        // ── Onboarding ────────────────────────────────────────────
+        composable(Screen.Onboarding.route) {
             OnboardingScreen(
                 onContinueWithEmail = {
-                    navController.navigate(Screen.Login.route){
-                        popUpTo(Screen.Onboarding.route){
-                            inclusive = true
-                        }
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(Screen.Onboarding.route) { inclusive = true }
                     }
                 },
-                onGoogleSignIn = { },
+                onGoogleSignIn   = { },
                 onFacebookSignIn = { },
-                onAppleSignIn = { }
+                onAppleSignIn    = { }
             )
         }
 
-        //Login Screen
-        composable(Screen.Login.route){
+        // ── Login ─────────────────────────────────────────────────
+        composable(Screen.Login.route) {
             LoginScreen(
-                onBackClick = { navController.popBackStack() },
-                onNextClick = { navController.navigate(Screen.CreateAccount.route) },
-//                onForgetPassword = { },
-                onCreateAccount  = {
-                    navController.navigate(Screen.CreateAccount.route)
-                }
+                onBackClick     = { navController.popBackStack() },
+                onNextClick     = { navController.navigate(Screen.Home.route) },
+                onCreateAccount = { navController.navigate(Screen.CreateAccount.route) }
             )
         }
 
-        //SignUp Screen
+        // ── Create Account (SignUp) ────────────────────────────────
         composable(Screen.CreateAccount.route) {
             SignUpScreen(
                 onBackClick = { navController.popBackStack() },
                 onNextClick = { navController.navigate(Screen.Gender.route) },
-                onLogin = { navController.navigate(Screen.Login.route) },
-                onCreateAccount= {}
+                onLogin     = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(Screen.CreateAccount.route) { inclusive = true }
+                    }
+                },
+                onCreateAccount = { }
             )
         }
 
-        //Gender Screen
+        // ── Gender ────────────────────────────────────────────────
         composable(Screen.Gender.route) {
             GenderScreen(
                 onBackClick = { navController.popBackStack() },
@@ -79,13 +81,93 @@ fun NavGraph(
             )
         }
 
-        //Habit Picker Screen
+        // ── Habit Picker ──────────────────────────────────────────
         composable(Screen.HabitPicker.route) {
             HabitPicker(
                 onBackClick = { navController.popBackStack() },
-                onNextClick = { navController.navigate(Screen.Home.route) }
+                onNextClick = {
+                    navController.navigate(Screen.Home.route) {
+                        // Clear entire auth back stack so user can't go back
+                        popUpTo(Screen.Onboarding.route) { inclusive = true }
+                    }
+                }
             )
         }
 
+        // ── Home ──────────────────────────────────────────────────
+        composable(Screen.Home.route) {
+            HomeScreen(
+                onNavigateExplore   = { navController.navigate(Screen.Explore.route) },
+                onNavigateActivity  = { navController.navigate(Screen.Activity.route) },
+                onNavigateProfile   = { navController.navigate(Screen.Profile.route) },
+                onViewAllHabits     = { },
+                onViewAllChallenges = { }
+            )
+        }
+
+        // ── Explore ───────────────────────────────────────────────
+        composable(Screen.Explore.route) {
+            ExploreScreen(
+                onNavigateHome     = { navController.navigate(Screen.Home.route) },
+                onNavigateActivity = { navController.navigate(Screen.Activity.route) },
+                onNavigateProfile  = { navController.navigate(Screen.Profile.route) }
+            )
+        }
+
+        // ── Activity ──────────────────────────────────────────────
+        composable(Screen.Activity.route) {
+            HomeScreen(
+                onNavigateExplore  = { navController.navigate(Screen.Explore.route) },
+                onNavigateActivity = { },
+                onNavigateProfile  = { navController.navigate(Screen.Profile.route) }
+            )
+        }
+
+        // ── Leaderboard ───────────────────────────────────────────
+        composable(Screen.Leaderboard.route) {
+            HomeScreen(
+                onNavigateExplore  = { navController.navigate(Screen.Explore.route) },
+                onNavigateActivity = { navController.navigate(Screen.Activity.route) },
+                onNavigateProfile  = { navController.navigate(Screen.Profile.route) }
+            )
+        }
+
+        // ── Profile ───────────────────────────────────────────────
+        composable(Screen.Profile.route) {
+            ProfileScreen(
+                onNavigateHome     = { navController.navigate(Screen.Home.route) },
+                onNavigateExplore  = { navController.navigate(Screen.Explore.route) },
+                onNavigateActivity = { navController.navigate(Screen.Activity.route) },
+                onSettingsClick    = { navController.navigate(Screen.Setting.route) }
+            )
+        }
+
+        // ── Settings ──────────────────────────────────────────────
+        composable(Screen.Setting.route) {
+            ProfileScreen(
+                onNavigateHome     = { navController.navigate(Screen.Home.route) },
+                onNavigateExplore  = { navController.navigate(Screen.Explore.route) },
+                onNavigateActivity = { navController.navigate(Screen.Activity.route) },
+                onSettingsClick    = { }
+            )
+        }
+
+        // ── Create Habit ──────────────────────────────────────────
+        composable(Screen.CreateHabit.route) {
+            HomeScreen(
+                onNavigateExplore  = { navController.navigate(Screen.Explore.route) },
+                onNavigateActivity = { navController.navigate(Screen.Activity.route) },
+                onNavigateProfile  = { navController.navigate(Screen.Profile.route) }
+            )
+        }
+
+        // ── Challenge Detail ──────────────────────────────────────
+        composable(Screen.ChallengeDetail.route) {
+            HomeScreen(
+                onNavigateExplore  = { navController.navigate(Screen.Explore.route) },
+                onNavigateActivity = { navController.navigate(Screen.Activity.route) },
+                onNavigateProfile  = { navController.navigate(Screen.Profile.route) }
+            )
+        }
     }
 }
