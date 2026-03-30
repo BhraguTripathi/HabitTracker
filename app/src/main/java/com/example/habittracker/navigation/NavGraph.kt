@@ -5,12 +5,16 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.habittracker.ui.screens.activity.ActivityScreen
 import com.example.habittracker.ui.screens.auth.GenderScreen
 import com.example.habittracker.ui.screens.auth.HabitPicker
 import com.example.habittracker.ui.screens.auth.LoginScreen
 import com.example.habittracker.ui.screens.auth.SignUpScreen
+import com.example.habittracker.ui.screens.challenge.ChallengeDetailScreen
 import com.example.habittracker.ui.screens.explore.ExploreScreen
+import com.example.habittracker.ui.screens.habit.CreateHabitScreen
 import com.example.habittracker.ui.screens.home.HomeScreen
+import com.example.habittracker.ui.screens.leaderboard.LeaderboardScreen
 import com.example.habittracker.ui.screens.onboarding.OnboardingScreen
 import com.example.habittracker.ui.screens.profile.ProfileScreen
 import com.example.habittracker.ui.screens.settings.SettingsScreen
@@ -21,7 +25,7 @@ fun NavGraph(
     navController: NavHostController = rememberNavController()
 ) {
     NavHost(
-        navController  = navController,
+        navController    = navController,
         startDestination = Screen.Splash.route
     ) {
 
@@ -54,7 +58,11 @@ fun NavGraph(
         composable(Screen.Login.route) {
             LoginScreen(
                 onBackClick     = { navController.popBackStack() },
-                onNextClick     = { navController.navigate(Screen.Home.route) },
+                onNextClick     = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                },
                 onCreateAccount = { navController.navigate(Screen.CreateAccount.route) }
             )
         }
@@ -62,9 +70,9 @@ fun NavGraph(
         // ── Create Account (SignUp) ────────────────────────────────
         composable(Screen.CreateAccount.route) {
             SignUpScreen(
-                onBackClick = { navController.popBackStack() },
-                onNextClick = { navController.navigate(Screen.Gender.route) },
-                onLogin     = {
+                onBackClick     = { navController.popBackStack() },
+                onNextClick     = { navController.navigate(Screen.Gender.route) },
+                onLogin         = {
                     navController.navigate(Screen.Login.route) {
                         popUpTo(Screen.CreateAccount.route) { inclusive = true }
                     }
@@ -87,7 +95,7 @@ fun NavGraph(
                 onBackClick = { navController.popBackStack() },
                 onNextClick = {
                     navController.navigate(Screen.Home.route) {
-                        // Clear entire auth back stack so user can't go back
+                        // Clear entire auth back stack — user can't go back to auth flow
                         popUpTo(Screen.Onboarding.route) { inclusive = true }
                     }
                 }
@@ -101,7 +109,7 @@ fun NavGraph(
                 onNavigateActivity  = { navController.navigate(Screen.Activity.route) },
                 onNavigateProfile   = { navController.navigate(Screen.Profile.route) },
                 onViewAllHabits     = { },
-                onViewAllChallenges = { }
+                onViewAllChallenges = { navController.navigate(Screen.Leaderboard.route) } // Example action
             )
         }
 
@@ -116,19 +124,17 @@ fun NavGraph(
 
         // ── Activity ──────────────────────────────────────────────
         composable(Screen.Activity.route) {
-            HomeScreen(
-                onNavigateExplore  = { navController.navigate(Screen.Explore.route) },
-                onNavigateActivity = { },
-                onNavigateProfile  = { navController.navigate(Screen.Profile.route) }
+            ActivityScreen(
+                onNavigateHome    = { navController.navigate(Screen.Home.route) },
+                onNavigateExplore = { navController.navigate(Screen.Explore.route) },
+                onNavigateProfile = { navController.navigate(Screen.Profile.route) }
             )
         }
 
         // ── Leaderboard ───────────────────────────────────────────
         composable(Screen.Leaderboard.route) {
-            HomeScreen(
-                onNavigateExplore  = { navController.navigate(Screen.Explore.route) },
-                onNavigateActivity = { navController.navigate(Screen.Activity.route) },
-                onNavigateProfile  = { navController.navigate(Screen.Profile.route) }
+            LeaderboardScreen(
+                onBackClick = { navController.popBackStack() }
             )
         }
 
@@ -144,29 +150,25 @@ fun NavGraph(
 
         // ── Settings ──────────────────────────────────────────────
         composable(Screen.Setting.route) {
-            ProfileScreen(
-                onNavigateHome     = { navController.navigate(Screen.Home.route) },
-                onNavigateExplore  = { navController.navigate(Screen.Explore.route) },
-                onNavigateActivity = { navController.navigate(Screen.Activity.route) },
-                onSettingsClick    = { }
+            SettingsScreen(
+                onBackClick = { navController.popBackStack() }
             )
         }
 
         // ── Create Habit ──────────────────────────────────────────
         composable(Screen.CreateHabit.route) {
-            HomeScreen(
-                onNavigateExplore  = { navController.navigate(Screen.Explore.route) },
-                onNavigateActivity = { navController.navigate(Screen.Activity.route) },
-                onNavigateProfile  = { navController.navigate(Screen.Profile.route) }
+            CreateHabitScreen(
+                onBackClick    = { navController.popBackStack() },
+                onHabitCreated = { navController.popBackStack() }
             )
         }
 
         // ── Challenge Detail ──────────────────────────────────────
         composable(Screen.ChallengeDetail.route) {
-            HomeScreen(
-                onNavigateExplore  = { navController.navigate(Screen.Explore.route) },
-                onNavigateActivity = { navController.navigate(Screen.Activity.route) },
-                onNavigateProfile  = { navController.navigate(Screen.Profile.route) }
+            ChallengeDetailScreen(
+                onBack = { navController.popBackStack() },
+                onAdd  = { /* Handle Add */ },
+                onJoin = { /* Handle Join */ }
             )
         }
     }

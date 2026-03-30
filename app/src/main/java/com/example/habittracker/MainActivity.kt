@@ -5,16 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.WindowCompat
-import com.example.habittracker.ui.screens.auth.GenderScreen
-import com.example.habittracker.ui.screens.auth.HabitPicker
-import com.example.habittracker.ui.screens.auth.LoginScreen
-import com.example.habittracker.ui.screens.auth.SignUpScreen
-import com.example.habittracker.ui.screens.explore.ExploreScreen
-import com.example.habittracker.ui.screens.home.HomeScreen
-import com.example.habittracker.ui.screens.onboarding.OnboardingScreen
-import com.example.habittracker.ui.screens.profile.ProfileScreen
-import com.example.habittracker.ui.screens.settings.SettingsScreen
-import com.example.habittracker.ui.screens.splash.SplashScreen
+import com.example.habittracker.navigation.NavGraph
+import com.example.habittracker.ui.screens.challenge.ChallengeDetailScreen
+import com.example.habittracker.ui.screens.habit.CreateHabitScreen
 import com.example.habittracker.ui.theme.HabitTrackerTheme
 
 class MainActivity : ComponentActivity() {
@@ -22,23 +15,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
-
-        // Allow drawing behind system bars (status bar + nav bar)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
             HabitTrackerTheme {
-//                NavGraph()
-//                SplashScreen()
-//                OnboardingScreen()
-//                LoginScreen()
-//                SignUpScreen()
-//                GenderScreen()
-//                HabitPicker()
-//                HomeScreen()
-//                ExploreScreen()
-//                ProfileScreen()
-                SettingsScreen()
+                NavGraph()
             }
         }
     }
