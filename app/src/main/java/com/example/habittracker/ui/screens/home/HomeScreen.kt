@@ -3,8 +3,6 @@ package com.example.habittracker.ui.screens.home
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -28,14 +27,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,6 +61,7 @@ import com.example.habittracker.ui.components.HabitCard
 import com.example.habittracker.ui.components.HabitCardData
 import com.example.habittracker.ui.components.NavDestination
 import com.example.habittracker.ui.components.SectionHeader
+import com.example.habittracker.ui.screens.habit.NewGoodHabitSheet
 import com.example.habittracker.ui.theme.BackgroundLight
 import com.example.habittracker.ui.theme.BorderColor
 import com.example.habittracker.ui.theme.ErrorRed
@@ -65,9 +70,10 @@ import com.example.habittracker.ui.theme.Primary
 import com.example.habittracker.ui.theme.PrimaryContainer
 import com.example.habittracker.ui.theme.TextPrimary
 import com.example.habittracker.ui.theme.TextSecondary
+import kotlinx.coroutines.launch
 
 // ─────────────────────────────────────────────────────────────────
-// DATA MODELS — Home screen specific
+// DATA MODELS
 // ─────────────────────────────────────────────────────────────────
 private data class DateItem(
     val dayNum  : Int,
@@ -96,15 +102,16 @@ private val sampleChallenge = ChallengeCardData(
 )
 
 private val sampleHabits = listOf(
-    HabitCardData(1, "💧", "Drink the water", "500/2000 ML",  Primary,            270f, false, 2, 3),
-    HabitCardData(2, "🚶", "Walk",            "0/10000 STEPS", Color(0xFF7B8FF7), 50f,  false, 2, 0),
-    HabitCardData(3, "🌿", "Water Plants",    "0/1 TIMES",     Color(0xFF28C76F), 10f,  false, 0, 0),
-    HabitCardData(4, "🧘", "Meditate",        "30/30 MIN",     Primary,           360f, true,  1, 0),
+    HabitCardData(1, "💧", "Drink the water", "500/2000 ML",   Primary,            270f, false, 2, 3),
+    HabitCardData(2, "🚶", "Walk",            "0/10000 STEPS", Color(0xFF7B8FF7),  50f,  false, 2, 0),
+    HabitCardData(3, "🌿", "Water Plants",    "0/1 TIMES",     Color(0xFF28C76F),  10f,  false, 0, 0),
+    HabitCardData(4, "🧘", "Meditate",        "30/30 MIN",     Primary,            360f, true,  1, 0),
 )
 
 // ─────────────────────────────────────────────────────────────────
 // HOME SCREEN
 // ─────────────────────────────────────────────────────────────────
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onNavigateExplore   : () -> Unit = {},
@@ -112,11 +119,18 @@ fun HomeScreen(
     onNavigateProfile   : () -> Unit = {},
     onViewAllHabits     : () -> Unit = {},
     onViewAllChallenges : () -> Unit = {},
+    onCreateCustomHabit : () -> Unit = {},   // ← NEW: FAB → CreateHabitScreen
+    onHabitClick        : () -> Unit = {},   // ← NEW: HabitCard tap → HabitDetailScreen
 ) {
     var selectedDateIndex by remember { mutableIntStateOf(1) }
     var selectedTab       by remember { mutableStateOf("Today") }
     var isFabOpen         by remember { mutableStateOf(false) }
     var selectedMood      by remember { mutableIntStateOf(-1) }
+
+    // ── Bottom sheet state ────────────────────────────────────────
+    var showHabitSheet  by remember { mutableStateOf(false) }
+    val sheetState       = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scope            = rememberCoroutineScope()
 
     Box(
         modifier = Modifier
@@ -197,16 +211,15 @@ fun HomeScreen(
             items(sampleHabits) { habit ->
                 HabitCard(
                     habit    = habit,
-                    modifier = Modifier.padding(
-                        horizontal = 20.dp,
-                        vertical   = 4.dp
-                    )
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp, vertical = 4.dp)
+                        .clickable { onHabitClick() }   // ← tap → HabitDetail
                 )
             }
             item { Spacer(modifier = Modifier.height(16.dp)) }
         }
 
-        // ── Scrim overlay ─────────────────────────────────────────
+        // ── Scrim when FAB menu is open ───────────────────────────
         AnimatedVisibility(
             visible = isFabOpen,
             enter   = fadeIn(),
@@ -220,20 +233,22 @@ fun HomeScreen(
             )
         }
 
-        // ── Add Menu Sheet ────────────────────────────────────────
+        // ── Compact FAB action cards (Quit + Mood only) ───────────
+        // "New Good Habit" now opens the ModalBottomSheet instead
         AnimatedVisibility(
             visible  = isFabOpen,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 80.dp),
-            enter    = slideInVertically(initialOffsetY = { it }) + fadeIn(),
-            exit     = slideOutVertically(targetOffsetY = { it }) + fadeOut()
         ) {
             HomeAddMenuSheet(
-                selectedMood   = selectedMood,
-                onMoodSelected = { selectedMood = it },
-                onQuitBadHabit = { isFabOpen = false },
-                onNewGoodHabit = { isFabOpen = false }
+                selectedMood    = selectedMood,
+                onMoodSelected  = { selectedMood = it },
+                onQuitBadHabit  = { isFabOpen = false },
+                onNewGoodHabit  = {
+                    isFabOpen = false
+                    showHabitSheet = true   // ← open the real bottom sheet
+                }
             )
         }
 
@@ -248,10 +263,37 @@ fun HomeScreen(
             modifier           = Modifier.align(Alignment.BottomCenter)
         )
     }
+
+    // ── New Good Habit ModalBottomSheet ───────────────────────────
+    // Rendered outside the Box so it sits above everything correctly
+    if (showHabitSheet) {
+        ModalBottomSheet(
+            onDismissRequest   = { showHabitSheet = false },
+            sheetState         = sheetState,
+            containerColor     = BackgroundLight,
+            tonalElevation     = 0.dp,
+            modifier           = Modifier.navigationBarsPadding()
+        ) {
+            NewGoodHabitSheet(
+                onCreateCustomHabit = {
+                    scope.launch { sheetState.hide() }.invokeOnCompletion {
+                        showHabitSheet = false
+                        onCreateCustomHabit()   // ← navigate to CreateHabitScreen
+                    }
+                },
+                onHabitSelected = { _ ->
+                    // Popular habit quick-add — handle in a later phase
+                    scope.launch { sheetState.hide() }.invokeOnCompletion {
+                        showHabitSheet = false
+                    }
+                }
+            )
+        }
+    }
 }
 
 // ─────────────────────────────────────────────────────────────────
-// HOME TOP BAR — only used here
+// HOME TOP BAR
 // ─────────────────────────────────────────────────────────────────
 @Composable
 private fun HomeTopBar(modifier: Modifier = Modifier) {
@@ -304,7 +346,7 @@ private fun HomeTopBar(modifier: Modifier = Modifier) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// HOME GREETING — only used here
+// HOME GREETING
 // ─────────────────────────────────────────────────────────────────
 @Composable
 private fun HomeGreeting(
@@ -344,7 +386,7 @@ private fun HomeGreeting(
 }
 
 // ─────────────────────────────────────────────────────────────────
-// HOME TAB ROW — only used here
+// HOME TAB ROW
 // ─────────────────────────────────────────────────────────────────
 @Composable
 private fun HomeTabRow(
@@ -361,14 +403,12 @@ private fun HomeTabRow(
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
 
-            // Today
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .clip(RoundedCornerShape(28.dp))
                     .background(
-                        if (selectedTab == "Today") Color.White
-                        else Color.Transparent
+                        if (selectedTab == "Today") Color.White else Color.Transparent
                     )
                     .clickable { onTabSelected("Today") }
                     .padding(vertical = 10.dp),
@@ -379,19 +419,16 @@ private fun HomeTabRow(
                     fontSize   = 15.sp,
                     fontWeight = FontWeight.SemiBold,
                     fontFamily = NunitoFontFamily,
-                    color      = if (selectedTab == "Today") Primary
-                    else TextSecondary
+                    color      = if (selectedTab == "Today") Primary else TextSecondary
                 )
             }
 
-            // Clubs with badge
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .clip(RoundedCornerShape(28.dp))
                     .background(
-                        if (selectedTab == "Clubs") Color.White
-                        else Color.Transparent
+                        if (selectedTab == "Clubs") Color.White else Color.Transparent
                     )
                     .clickable { onTabSelected("Clubs") }
                     .padding(vertical = 10.dp),
@@ -406,8 +443,7 @@ private fun HomeTabRow(
                         fontSize   = 15.sp,
                         fontWeight = FontWeight.SemiBold,
                         fontFamily = NunitoFontFamily,
-                        color      = if (selectedTab == "Clubs") Primary
-                        else TextSecondary
+                        color      = if (selectedTab == "Clubs") Primary else TextSecondary
                     )
                     Box(
                         modifier = Modifier
@@ -423,8 +459,7 @@ private fun HomeTabRow(
                             fontSize   = 11.sp,
                             fontWeight = FontWeight.Bold,
                             fontFamily = NunitoFontFamily,
-                            color      = if (selectedTab == "Clubs") Primary
-                            else TextSecondary
+                            color      = if (selectedTab == "Clubs") Primary else TextSecondary
                         )
                     }
                 }
@@ -434,7 +469,7 @@ private fun HomeTabRow(
 }
 
 // ─────────────────────────────────────────────────────────────────
-// HOME DATE STRIP — only used here
+// HOME DATE STRIP
 // ─────────────────────────────────────────────────────────────────
 @Composable
 private fun HomeDateStrip(
@@ -486,7 +521,7 @@ private fun HomeDateStrip(
 }
 
 // ─────────────────────────────────────────────────────────────────
-// HOME PROGRESS BANNER — only used here
+// HOME PROGRESS BANNER
 // ─────────────────────────────────────────────────────────────────
 @Composable
 private fun HomeProgressBanner(
@@ -517,9 +552,7 @@ private fun HomeProgressBanner(
                 modifier         = Modifier.size(60.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Canvas(
-                    modifier = Modifier.size(60.dp)
-                ) {
+                Canvas(modifier = Modifier.size(60.dp)) {
                     drawCircle(
                         color  = Color.White.copy(alpha = 0.25f),
                         radius = size.minDimension / 2,
@@ -568,14 +601,16 @@ private fun HomeProgressBanner(
 }
 
 // ─────────────────────────────────────────────────────────────────
-// HOME ADD MENU SHEET — only used here
+// HOME ADD MENU SHEET
+// Shown as animated overlay above the nav bar when FAB is open
+// Contains: Quit Bad Habit | New Good Habit | Add Mood
 // ─────────────────────────────────────────────────────────────────
 @Composable
 private fun HomeAddMenuSheet(
     selectedMood   : Int,
     onMoodSelected : (Int) -> Unit,
     onQuitBadHabit : () -> Unit,
-    onNewGoodHabit : () -> Unit,
+    onNewGoodHabit : () -> Unit,    // ← now opens ModalBottomSheet
 ) {
     val moods = listOf("😠", "😟", "😐", "🙂", "😍")
 
@@ -585,7 +620,7 @@ private fun HomeAddMenuSheet(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        // Quit + New row
+        // Quit + New Good Habit row
         Row(
             modifier              = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -629,7 +664,7 @@ private fun HomeAddMenuSheet(
             }
 
             Surface(
-                onClick  = onNewGoodHabit,
+                onClick  = onNewGoodHabit,   // ← triggers ModalBottomSheet
                 shape    = RoundedCornerShape(20.dp),
                 color    = Color.White,
                 modifier = Modifier.weight(1f)

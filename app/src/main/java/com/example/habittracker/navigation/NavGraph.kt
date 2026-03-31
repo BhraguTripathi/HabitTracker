@@ -13,6 +13,7 @@ import com.example.habittracker.ui.screens.auth.SignUpScreen
 import com.example.habittracker.ui.screens.challenge.ChallengeDetailScreen
 import com.example.habittracker.ui.screens.explore.ExploreScreen
 import com.example.habittracker.ui.screens.habit.CreateHabitScreen
+import com.example.habittracker.ui.screens.habit.HabitDetailScreen
 import com.example.habittracker.ui.screens.home.HomeScreen
 import com.example.habittracker.ui.screens.leaderboard.LeaderboardScreen
 import com.example.habittracker.ui.screens.onboarding.OnboardingScreen
@@ -70,9 +71,9 @@ fun NavGraph(
         // ── Create Account (SignUp) ────────────────────────────────
         composable(Screen.CreateAccount.route) {
             SignUpScreen(
-                onBackClick     = { navController.popBackStack() },
-                onNextClick     = { navController.navigate(Screen.Gender.route) },
-                onLogin         = {
+                onBackClick = { navController.popBackStack() },
+                onNextClick = { navController.navigate(Screen.Gender.route) },
+                onLogin     = {
                     navController.navigate(Screen.Login.route) {
                         popUpTo(Screen.CreateAccount.route) { inclusive = true }
                     }
@@ -95,7 +96,6 @@ fun NavGraph(
                 onBackClick = { navController.popBackStack() },
                 onNextClick = {
                     navController.navigate(Screen.Home.route) {
-                        // Clear entire auth back stack — user can't go back to auth flow
                         popUpTo(Screen.Onboarding.route) { inclusive = true }
                     }
                 }
@@ -105,11 +105,15 @@ fun NavGraph(
         // ── Home ──────────────────────────────────────────────────
         composable(Screen.Home.route) {
             HomeScreen(
-                onNavigateExplore   = { navController.navigate(Screen.Explore.route) },
-                onNavigateActivity  = { navController.navigate(Screen.Activity.route) },
-                onNavigateProfile   = { navController.navigate(Screen.Profile.route) },
-                onViewAllHabits     = { },
-                onViewAllChallenges = { navController.navigate(Screen.Leaderboard.route) } // Example action
+                onNavigateExplore    = { navController.navigate(Screen.Explore.route) },
+                onNavigateActivity   = { navController.navigate(Screen.Activity.route) },
+                onNavigateProfile    = { navController.navigate(Screen.Profile.route) },
+                onViewAllHabits      = { },
+                onViewAllChallenges  = { navController.navigate(Screen.Leaderboard.route) },
+                // ← wired up: FAB → Create Custom Habit
+                onCreateCustomHabit  = { navController.navigate(Screen.CreateHabit.route) },
+                // ← wired up: HabitCard tap → Habit Detail
+                onHabitClick         = { navController.navigate(Screen.HabitDetail.route) }
             )
         }
 
@@ -163,12 +167,22 @@ fun NavGraph(
             )
         }
 
+        // ── Habit Detail ──────────────────────────────────────────  ← NEW
+        composable(Screen.HabitDetail.route) {
+            HabitDetailScreen(
+                onBackClick = { navController.popBackStack() },
+                onEditClick = {
+                    navController.navigate(Screen.CreateHabit.route)
+                }
+            )
+        }
+
         // ── Challenge Detail ──────────────────────────────────────
         composable(Screen.ChallengeDetail.route) {
             ChallengeDetailScreen(
                 onBack = { navController.popBackStack() },
-                onAdd  = { /* Handle Add */ },
-                onJoin = { /* Handle Join */ }
+                onAdd  = { },
+                onJoin = { }
             )
         }
     }
