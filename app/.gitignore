@@ -1,1 +1,51 @@
-/build
+# Built application files
+*.apk
+*.aar
+*.ap_
+*.aab
+
+# Java class files
+*.class
+
+# Generated files
+bin/
+gen/
+out/
+release/
+
+# Gradle files
+.gradle/
+build/
+
+# THIS FILE MUST NEVER BE PUSHED — contains your local SDK path
+local.properties
+
+# Android Studio / IntelliJ
+*.iml
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/libraries
+.idea/caches
+.idea/navEditor.xml
+.idea/modules.xml
+.idea/copilotDiffState.xml
+.idea/caches/deviceStreaming.xml
+
+# Keystore files — NEVER push signing keys
+*.jks
+*.keystore
+
+# Firebase — NEVER push, contains project secrets
+google-services.json
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# External native build
+.externalNativeBuild
+.cxx
